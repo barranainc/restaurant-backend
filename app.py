@@ -1,29 +1,26 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from flask import Flask, jsonify
 import datetime
 
-app = FastAPI(title="Restaurant Reservation System", version="1.0.0")
+app = Flask(__name__)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/")
+@app.route("/")
 def root():
-    return {"message": "Restaurant Reservation API is running", "status": "healthy"}
+    return jsonify({
+        "message": "Restaurant Reservation API is running",
+        "status": "healthy",
+        "timestamp": datetime.datetime.now().isoformat()
+    })
 
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "timestamp": datetime.datetime.now().isoformat()}
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.datetime.now().isoformat()
+    })
 
-@app.get("/ping")
+@app.route("/ping")
 def ping():
-    return {"pong": "ok"}
+    return jsonify({"pong": "ok"})
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000, debug=False)
